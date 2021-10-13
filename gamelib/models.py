@@ -3,35 +3,33 @@ from django.db.models.fields.related import ForeignKey
 from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
-
+len_medium = 50 
+len_medium = 500
+len_max = 10000
 class User(models.Model):
-    full_name = models.CharField(max_length=50)
-    user_name = models.CharField(max_length=50 , unique=True)
-    pass_word = models.CharField(max_length=50)
+    full_name = models.CharField(max_length=len_medium)
+    user_name = models.CharField(max_length=len_medium , unique=True)
+    pass_word = models.CharField(max_length=len_medium)
     created_at = models.DateTimeField()
 class Requirement(models.Model):
-    os = models.CharField(max_length=500)
-    storage = models.CharField(max_length=500)
-    ram = models.CharField(max_length=500)
-    graphic = models.CharField(max_length=750)
-    processor = models.CharField(max_length=750)
-class Game(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=1500)
-    producer = models.CharField(max_length=500)
-    publisher = models.CharField(max_length=500)
-    home_page = models.CharField(max_length=750)
-    requirement_id = ForeignKey(Requirement , on_delete=models.CASCADE)
-    release_date = models.DateTimeField()
-    images = ArrayField(ArrayField(models.CharField(max_length=1000)))
+    os = models.CharField(max_length=len_medium)
+    storage = models.CharField(max_length=len_medium)
+    ram = models.CharField(max_length=len_medium)
+    graphic = models.CharField(max_length=len_medium)
+    processor = models.CharField(max_length=len_medium)
 
 class Category(models.Model):
-    name = models.CharField(max_length=250)
-    
-class Game_Category(models.Model):
-    game_id = ForeignKey(Game, on_delete=models.CASCADE)
-    category_id = ForeignKey(Category,on_delete=models.CASCADE)
-
+    name = models.CharField(max_length=len_medium)
+class Game(models.Model):
+    name = models.CharField(max_length=len_medium)
+    description = models.CharField(max_length=len_max)
+    producer = models.CharField(max_length=len_medium)
+    publisher = models.CharField(max_length=len_medium)
+    home_page = models.CharField(max_length=len_medium)
+    requirement_id = ForeignKey(Requirement , on_delete=models.CASCADE)
+    release_date = models.DateTimeField(blank=None,null=None)
+    images = ArrayField(ArrayField(models.CharField(max_length=len_medium)))
+    categories = models.ManyToManyField(Category)
 
 class Like(models.Model) :
     user_id = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -40,7 +38,7 @@ class Like(models.Model) :
 class Comment(models.Model):
     user_id = models.ForeignKey(User,on_delete=models.CASCADE)
     game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
-    content = models.CharField(max_length=500)
+    content = models.CharField(max_length=len_medium)
     created_at = models.DateTimeField()
 
 class Rating(models.Model):
