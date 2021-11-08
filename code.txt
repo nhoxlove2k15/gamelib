@@ -1,5 +1,4 @@
 
-
 py manage.py dbshell
 
 TRUNCATE TABLE gamelib_requirement RESTART IDENTITY CASCADE;
@@ -10,3 +9,10 @@ TRUNCATE TABLE gamelib_user RESTART IDENTITY CASCADE;
 TRUNCATE TABLE gamelib_comment RESTART IDENTITY CASCADE;
 TRUNCATE TABLE gamelib_like RESTART IDENTITY CASCADE;
 TRUNCATE TABLE gamelib_rating RESTART IDENTITY CASCADE;
+
+get game/popular (rating or vote)
+get game/update (update day)
+sort -> order by name , release-date ,..
+get game/category -> filter , 
+filter tag + order by name
+get game/ -> search

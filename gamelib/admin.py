@@ -1,11 +1,11 @@
-from gamelib.models import *
-import datetime
-import hashlib
-game = Game.objects.get(pk=1)
-categories = game.categories.all()
-print(game.name + "" )
-for i in range(len(categories)):
-    print(categories[i].name)
+# from gamelib.models import *
+# import datetime
+# import hashlib
+# game = Game.objects.get(pk=1)
+# categories = game.categories.all()
+# print(game.name + "" )
+# for i in range(len(categories)):
+#     print(categories[i].name)
 # create 
 
 # User(full_name="Nguyễn Văn A" , user_name="nhoxlove" , pass_word=str(hash("123456")) , created_at = datetime.datetime.now()).save()

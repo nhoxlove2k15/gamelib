@@ -12,7 +12,6 @@ def delete_everything():
     Requirement.objects.all().delete()
     Category.objects.all().delete()
     #Game_Category.objects.all().delete()
-
     User.objects.all().delete()
     Rating.objects.all().delete()
     Like.objects.all().delete()

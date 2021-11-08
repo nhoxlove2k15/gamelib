@@ -1,3 +1,4 @@
+import json
 from django.db import models
 from django.db.models.fields.related import ForeignKey
 from django.contrib.postgres.fields import ArrayField
@@ -26,10 +27,12 @@ class Game(models.Model):
     producer = models.CharField(max_length=len_medium)
     publisher = models.CharField(max_length=len_medium)
     home_page = models.CharField(max_length=len_medium)
-    requirement_id = ForeignKey(Requirement , on_delete=models.CASCADE)
+    requirement_id = ForeignKey(Requirement , on_delete=models.CASCADE , related_name='requirements' )
     release_date = models.DateTimeField(blank=None,null=None)
-    images = ArrayField(ArrayField(models.CharField(max_length=len_medium)))
+    images = ArrayField(models.CharField(max_length=len_medium))
     categories = models.ManyToManyField(Category)
+    
+
 
 class Like(models.Model) :
     user_id = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -43,6 +46,6 @@ class Comment(models.Model):
 
 class Rating(models.Model):
     user_id = models.ForeignKey(User,on_delete=models.CASCADE)
-    game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
+    game_id = models.ForeignKey(Game, on_delete=models.CASCADE , related_name='game_rating')
     rate = ArrayField(models.IntegerField())
    
