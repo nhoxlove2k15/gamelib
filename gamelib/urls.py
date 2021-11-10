@@ -5,6 +5,7 @@ from gamelib.views import *
 from django.urls import  path
 from rest_framework import routers
 from gamelib.games.views import *
+from gamelib.users.views import *
 
 
 from rest_framework_simplejwt.views import (

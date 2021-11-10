@@ -2,25 +2,16 @@
 
 # Create your views here.
 import json
-from django.contrib.postgres.fields import array
 
-from django.http.response import HttpResponse, JsonResponse
+
+from django.http.response import  JsonResponse
 from gamelib.models import *
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.views.decorators.csrf import csrf_exempt
-import hashlib
-from datetime import datetime
-import datetime
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Sum, query
-from django.db.models import Func, F
-from django.http import HttpRequest,HttpResponse
+
+
 from django.http import JsonResponse
 from django.core import serializers
-from django.forms.models import model_to_dict
 from gamelib.serializers import *
-from rest_framework.response import Response
-from rest_framework.generics import(ListAPIView, ListCreateAPIView)
+
 from rest_framework import status
 from rest_framework.settings import api_settings
 from rest_framework import viewsets
@@ -30,129 +21,53 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
-class ListCreateGameView(ListCreateAPIView):
-    model = Game
-    serializer_class = GameSerializer
+# class ListCreateGameView(ListCreateAPIView):
+#     model = Game
+#     serializer_class = GameSerializer
 
-    def get_queryset(self):
-        return Game.objects.all()
+#     def get_queryset(self):
+#         return Game.objects.all()
 
-    def create(self, request, *args, **kwargs):
-        serializer = GameSerializer(data=request.data)
+#     def create(self, request, *args, **kwargs):
+#         serializer = GameSerializer(data=request.data)
 
-        if serializer.is_valid():
-            serializer.save()
+#         if serializer.is_valid():
+#             serializer.save()
 
-            return JsonResponse({
-                'message': 'Create a new Car successful!'
-            }, status=status.HTTP_201_CREATED)
+#             return JsonResponse({
+#                 'message': 'Create a new Car successful!'
+#             }, status=status.HTTP_201_CREATED)
 
-        return JsonResponse({
-            'message': 'Create a new Car unsuccessful!'
-        }, status=status.HTTP_400_BAD_REQUEST)
+#         return JsonResponse({
+#             'message': 'Create a new Car unsuccessful!'
+#         }, status=status.HTTP_400_BAD_REQUEST)
 
-class UpdateDeleteGameView(RetrieveUpdateDestroyAPIView):
-    model = Game
-    serializer_class = GameSerializer
+# class UpdateDeleteGameView(RetrieveUpdateDestroyAPIView):
+#     model = Game
+#     serializer_class = GameSerializer
 
-    def put(self, request, *args, **kwargs):
-        query.QuerySet = get_object_or_404(Game, id=kwargs.get('pk'))
-        serializer = GameSerializer(post, data=request.data)
+#     def put(self, request, *args, **kwargs):
+#         query.QuerySet = get_object_or_404(Game, id=kwargs.get('pk'))
+#         serializer = GameSerializer(post, data=request.data)
 
-        if serializer.is_valid():
-            serializer.save()
+#         if serializer.is_valid():
+#             serializer.save()
 
-            return JsonResponse({
-                'message': 'Update Car successful!'
-            }, status=status.HTTP_200_OK)
+#             return JsonResponse({
+#                 'message': 'Update Car successful!'
+#             }, status=status.HTTP_200_OK)
 
-        return JsonResponse({
-            'message': 'Update Car unsuccessful!'
-        }, status=status.HTTP_400_BAD_REQUEST)
+#         return JsonResponse({
+#             'message': 'Update Car unsuccessful!'
+#         }, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, *args, **kwargs):
-        car = get_object_or_404(Game, id=kwargs.get('pk'))
-        car.delete()
+#     def delete(self, request, *args, **kwargs):
+#         car = get_object_or_404(Game, id=kwargs.get('pk'))
+#         car.delete()
 
-        return JsonResponse({
-            'message': 'Delete Car successful!'
-        }, status=status.HTTP_200_OK)
-# first login
-@csrf_exempt
-def get_tokens_for_user(request):
-    body_unicode = request.body.decode('utf-8')
-    body = json.loads(body_unicode)
-    try:
-        username = body['username']
-        password = body['password']
-    except ObjectDoesNotExist:  
-        username = None
-        password = None
-    
-    print("authen : " , username + " " + password )
-    if username is None or password is None :
-        return JsonResponse({
-            "message": "login failed",
-            "status" : "failed", 
-        })
-    try:
-        user = User.objects.get(user_name = username , pass_word = hashlib.md5(password.encode()).hexdigest() )
-    except ObjectDoesNotExist:
-        user = None
-    if user is None : 
-        return JsonResponse({
-            "message": "login failed",
-            "status" : "failed", 
-        })
-    print('user : ' , user.full_name)
-   # print('user : ' ,user)
-    refresh = RefreshToken.for_user(user)
-    # refresh = RefreshToken()
-
-    return JsonResponse({
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    })
-  
-@csrf_exempt
-def create_user(request):
-    body_unicode = request.body.decode('utf-8')
-    body = json.loads(body_unicode)
-    username = body['username']
-    password = body['password']
-    fullname = body['fullname']
-    user = User.objects.create(full_name=fullname , user_name = username , pass_word = hashlib.md5(password.encode()).hexdigest() , created_at = datetime.datetime.now())
-    if user == None:
-        return JsonResponse({
-            "message": "login failed",
-            "status" : "failed", 
-        })
-    return JsonResponse({
-            "message": "register successfully",
-            "status" : "true", 
-        })
-
-
-
-# Create your views here.
-@csrf_exempt
-def say_hello(request):
-    body = request.headers
-    #body = json.loads(body_unicode)
-    token = body["Authorization"][7:]
-    print("token: " + token)
-    if token is None :
-        data = {
-            'message' : 'false',
-            'status' : 200
-        }
-    else :
-        data = {
-            'message' : 'true',
-            'status' : 200
-        }
-
-    return JsonResponse(data)
+#         return JsonResponse({
+#             'message': 'Delete Car successful!'
+#         }, status=status.HTTP_200_OK)
 
 def get_game_popular(request) :
     
