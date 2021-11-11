@@ -10,9 +10,18 @@ TRUNCATE TABLE gamelib_comment RESTART IDENTITY CASCADE;
 TRUNCATE TABLE gamelib_like RESTART IDENTITY CASCADE;
 TRUNCATE TABLE gamelib_rating RESTART IDENTITY CASCADE;
 
-get game/popular (rating or vote)
-get game/update (update day)
+get game/popular (rating or vote) -> GET
+get game/update (update day) -> GET
 sort -> order by name , release-date ,..
-get game/category -> filter , 
-filter tag + order by name
-get game/ -> search
+search -> by name , tag 
+
+
+filter -> by release date ( > 17/09/2015 and  < 17/09/2018)
+comment -> disqus
+rating 
+recommand
+saved 
+
+write document
+
+

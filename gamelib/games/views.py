@@ -1,9 +1,10 @@
 # views.py
-from json.encoder import JSONEncoder
-from django.db.models import query
-from django.http.response import JsonResponse
-from rest_framework import response, serializers, viewsets
 
+import json,datetime
+from django.http.response import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import viewsets,filters
+from django_filters import *
 from .serializers import GameSerializer,RequirementSerializer
 from gamelib.models import Game, Rating, Requirement
 from rest_framework import generics,filters
@@ -22,28 +23,80 @@ from rest_framework import generics,filters
 #     filter_backends = [DjangoFilterBackend]
 #     filterset_fields = ['categories']
 import django_filters
+# search
 class GameFilter(django_filters.FilterSet):
     ids = django_filters.Filter(field_name='categories',lookup_expr='in')
     filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['name','release_date']
     class Meta:
         model = Game
-        fields = ('id','name')
+        fields = ['id','name']
+#search category
 class GameFilterCategory(generics.ListAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     filter_class = GameFilter
-    
+
+
+class FF(generics.ListAPIView):
+    serializer_class = GameSerializer
+    def get_queryset(self):   
+        mindate = self.request.query_params.get('min_date')
+        maxdate = self.request.query_params.get('max_date')
+        if mindate is None :
+            queryset = Game.objects.filter(release_date__lte = maxdate)
+        if maxdate is None :
+            queryset = Game.objects.filter(release_date__gte = mindate)
+        if maxdate is not None and mindate is not None:
+            # queryset = queryset.filter(game__id is1)
+            queryset = Game.objects.filter(release_date__lte = maxdate).filter(release_date__gte = mindate)
+        return queryset
+
+
+# sort name & release_date
 class GameFilterOrderByName(generics.ListAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['name','release_date']
-class GameSearchName(generics.ListCreateAPIView):
-    search_fields = ['name','publisher']
+# search name
+#      
+class GameSearchName(generics.ListAPIView):
+    print(Game.objects.all())
+    search_fields = ['name','publisher','description']
     filter_backends = (filters.SearchFilter,)
     queryset = Game.objects.all()
+
     serializer_class = GameSerializer
+
+# rating
+# Create your views here.
+@csrf_exempt
+def create_rating(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    user_id = body['userid']
+    game_id = body['gameid']
+    story = body['story']
+    gameplay = body['gameplay']
+    graphic = body['graphic']
+    sound = body['sound']
+    overall = body['overall']
+    
+
+    rating = Rating.objects.create( user_id = user_id , game_id = game_id , created_at = datetime.datetime.now() , 
+                                  rate = [story,gameplay,graphic,sound,overall] )
+    if rating is None:
+        return JsonResponse({
+            "message": "rating failed",
+            "status" : "failed", 
+        })
+    return JsonResponse({
+            "message": "rating successfully",
+            "status" : "true", 
+        })
+
+
+
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.filter(pk=4)
     serializer_class = GameSerializer

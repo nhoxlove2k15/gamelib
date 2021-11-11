@@ -12,6 +12,7 @@ class RequirementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Requirement
         fields = ('__all__')
+
 class GameSerializer(serializers.ModelSerializer):
     #category_name = serializers.CharField(source='requirement_id.os')
     requirement_os = serializers.CharField(source='requirement_id.os')
@@ -25,6 +26,7 @@ class GameSerializer(serializers.ModelSerializer):
         model = Game
         fields = ('id' , 'name' , 'description' , 'producer' , 'publisher' ,'home_page' , 'release_date' , 'images' , 'categories' , 
         'requirement_os' , 'requirement_ram','requirement_storage','requirement_processor','requirement_graphic')
+        #fields = (__all__)
     def to_representation(self, instance):
         ret = super(GameSerializer, self).to_representation(instance)
         # check the request is list view or detail view

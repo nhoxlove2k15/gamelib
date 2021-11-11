@@ -23,8 +23,9 @@ urlpatterns = [
     path('game/tag/', GameFilterCategory.as_view()),
     path('game/ordered/',GameFilterOrderByName.as_view()),
     path('game/', GameSearchName.as_view()),
+    path('game/filter/',FF.as_view()),
     
-
+    path('game/rating/', create_rating),
     
     path('hello' , say_hello),
     path('token' , get_tokens_for_user),

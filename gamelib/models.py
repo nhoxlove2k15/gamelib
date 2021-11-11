@@ -10,8 +10,8 @@ len_max = 10000
 class User(models.Model):
     full_name = models.CharField(max_length=len_medium)
     user_name = models.CharField(max_length=len_medium , unique=True)
-    pass_word = models.CharField(max_length=len_medium)
-    created_at = models.DateTimeField()
+    pass_word = models.CharField(max_length=len_medium,default="")
+    created_at = models.DateTimeField(default="")
 class Requirement(models.Model):
     os = models.CharField(max_length=len_medium)
     storage = models.CharField(max_length=len_medium)
