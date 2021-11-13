@@ -944,10 +944,10 @@ Rating.objects.create(user_id = User.objects.get(pk = 1 ), game_id = Game.object
 Rating.objects.create(user_id = User.objects.get(pk = 4 ), game_id = Game.objects.get(pk=1), rate=[5,6,7,8,9 ])
 
 Like.objects.create(user_id= User.objects.get(id=1 ), game_id =  Game.objects.get(id=1))
-Like.objects.create(user_id= User.objects.get(id=1 ), game_id =  Game.objects.get(id=1))
-Like.objects.create(user_id= User.objects.get(id=1 ), game_id =  Game.objects.get(id=1))
+Like.objects.create(user_id= User.objects.get(id=1 ), game_id =  Game.objects.get(id=2))
+Like.objects.create(user_id= User.objects.get(id=1 ), game_id =  Game.objects.get(id=3))
 Like.objects.create(user_id= User.objects.get(id=2 ), game_id =  Game.objects.get(id=2))
-Like.objects.create(user_id= User.objects.get(id=2 ), game_id =  Game.objects.get(id=2))
+Like.objects.create(user_id= User.objects.get(id=2 ), game_id =  Game.objects.get(id=1))
 
 c = ["none"]
 # create category

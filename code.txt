@@ -17,11 +17,21 @@ search -> by name , tag
 
 
 filter -> by release date ( > 17/09/2015 and  < 17/09/2018)
-comment -> disqus
-rating 
-recommand
-saved 
 
-write document
+# =================== rating ===================
+rating -> làm sao biết dc để gửi dc cái PUT thay vì POST ở F.E
+path : user/rating/1/
+# ==================== comment ===================
+comment -> user/comment/1
+get detail game with comment , rate 
+
+
+# ==================== saved ===================
+saved 
+swagger
+container
+recommand
+
+
 
 

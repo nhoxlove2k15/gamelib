@@ -1,3 +1,5 @@
+from datetime import time
+import datetime
 import json
 from django.db import models
 from django.db.models.fields.related import ForeignKey
@@ -10,8 +12,8 @@ len_max = 10000
 class User(models.Model):
     full_name = models.CharField(max_length=len_medium)
     user_name = models.CharField(max_length=len_medium , unique=True)
-    pass_word = models.CharField(max_length=len_medium,default="")
-    created_at = models.DateTimeField(default="")
+    pass_word = models.CharField(max_length=len_medium)
+    created_at = models.DateTimeField(null=True , default=datetime.datetime.now())
 class Requirement(models.Model):
     os = models.CharField(max_length=len_medium)
     storage = models.CharField(max_length=len_medium)
@@ -37,15 +39,20 @@ class Game(models.Model):
 class Like(models.Model) :
     user_id = models.ForeignKey(User,on_delete=models.CASCADE)
     game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(null=True , default=datetime.datetime.now())
+    class Meta:
+        unique_together = [['user_id', 'game_id']]
 
 class Comment(models.Model):
     user_id = models.ForeignKey(User,on_delete=models.CASCADE)
     game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
     content = models.CharField(max_length=len_medium)
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(null=True , default=datetime.datetime.now())
 
 class Rating(models.Model):
     user_id = models.ForeignKey(User,on_delete=models.CASCADE)
-    game_id = models.ForeignKey(Game, on_delete=models.CASCADE , related_name='game_rating')
+    game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
     rate = ArrayField(models.IntegerField())
+    class Meta:
+        unique_together = [['user_id', 'game_id']]
    
