@@ -1,59 +1,48 @@
 # views.py
 
+import hashlib
 import json,datetime
+from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import serializers, viewsets,filters
+from rest_framework import serializers, status, viewsets,filters
 from django_filters import *
+from rest_framework.response import Response
+from rest_framework.schemas import coreapi, openapi
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
-from gamelib.models import Game, Rating, Requirement
+from gamelib.models import Comment, Game, Like, Rating, Requirement, User
 from rest_framework import generics,filters
 
-
-
-# game = Game.objects.get(pk=1)
-# categories = game.categories.all()
-# print(game.name + "" )
-# for i in range(len(categories)):
-#     print(categories[i].name)
-# from django_filters.rest_framework import DjangoFilterBackend
-# class GameList(generics.ListAPIView):
-#     queryset = Game.objects.all()
-#     serializer_class = GetGameSerializer
-#     filter_backends = [DjangoFilterBackend]
-#     filterset_fields = ['categories']
 import django_filters
 
-from gamelib.serializers import GetGameSerializer
+from gamelib.serializers import CommentSerializer, GetCommentSerializer, GetGameSerializer, GetLikeSerializer, LikeSerializer, RatingSearializer, UserSerializer
+
+
 # search
 class GameEngineSearchByCategory(django_filters.FilterSet):
-    ids = django_filters.Filter(field_name='categories',lookup_expr='in')
+    tag = django_filters.Filter(field_name='categories',lookup_expr='in')
     filter_backends = [filters.OrderingFilter]
     class Meta:
         model = Game
-        fields = ['id','name']
+        fields = []
 #search category
 class GameSearchByCategory(generics.ListAPIView):
     queryset = Game.objects.all()
     serializer_class = GetGameSerializer
     filter_class = GameEngineSearchByCategory
 
-
+class GameEngineFilterByDate(django_filters.FilterSet):
+    min_date = django_filters.Filter(field_name='release_date' ,lookup_expr='gte')
+    max_date = django_filters.Filter(field_name='release_date' , lookup_expr='lte')
+    class Meta:
+        model = Game 
+        fields = []
 class GameFilterByDate(generics.ListAPIView):
-    serializer_class = GetGameSerializer
-    def get_queryset(self):   
-        mindate = self.request.query_params.get('min_date')
-        maxdate = self.request.query_params.get('max_date')
-        if mindate is None :
-            queryset = Game.objects.filter(release_date__lte = maxdate)
-        if maxdate is None :
-            queryset = Game.objects.filter(release_date__gte = mindate)
-        if maxdate is not None and mindate is not None:
-            # queryset = queryset.filter(game__id is1)
-            queryset = Game.objects.filter(release_date__lte = maxdate).filter(release_date__gte = mindate)
-        return queryset
-
+    queryset = Game.objects.all()
+    serializer_class=GetGameSerializer
+    filter_class = GameEngineFilterByDate
 
 # sort name & release_date
 class GameSortByNameAndDate(generics.ListAPIView):
@@ -64,26 +53,51 @@ class GameSortByNameAndDate(generics.ListAPIView):
 # search name
 #      
 class GameSearchByName(generics.ListAPIView):
-    print(Game.objects.all())
+    
     search_fields = ['name','publisher','description']
     filter_backends = (filters.SearchFilter,)
     queryset = Game.objects.all()
-
     serializer_class = GetGameSerializer
 
-# rating
-
-
-class GameViewSet(viewsets.ModelViewSet):
-    queryset = Game.objects.filter(pk=4)
+class GameDetailEngine(generics.GenericAPIView):
     serializer_class = GetGameSerializer
-# class RequirementViewSet(viewsets.ModelViewSet):
-#     queryset = Requirement.objects.filter(pk=1)
-#     serializer_class = RequirementSerializer
-class GameLatest(viewsets.ModelViewSet):
+    def get(self, request, *args,**kwargs):
+        game_id = request.path[request.path.rfind('/') + 1: ]
+        print("hello:" , game_id )
+        
+        game = Game.objects.filter(pk=game_id)
+        serializer_game = GetGameSerializer(game , many=True)
+        comments = Comment.objects.filter(game_id=game_id)
+        serializer_comment = GetCommentSerializer(comments,many=True)
+        rates = Rating.objects.filter(game_id=game_id)
+        serializer_rate = RatingSearializer(rates,many=True)
+        #print(type(serializer_rate.data))
+        a = serializer_rate.data
+        b = []
+        for i in range(len(a)):
+            b.append(a[i]['rate'])
+        v = [sum(x) for x in zip(*b)]
+        if len(v) != 0 :
+            rate = {
+                'story':v[0],
+                'gameplay':v[1],
+                'sound':v[2],
+                'graphic':v[3],
+                'overall':v[4]
+            }
+        else :
+            rate =[]
+        print(type(rate))
+        return JsonResponse({
+            'game' : serializer_game.data,
+            'comment':serializer_comment.data,
+            'rate' : rate
+        })
+
+    
+class GameLatest(generics.ListAPIView):
     queryset = Game.objects.all().order_by('-release_date')[:5]
     serializer_class = GetGameSerializer
-
 
 def query_popular_game():
     popular_games = Rating.objects.raw("SELECT  1 as id , game_id_id , (SELECT SUM(s) FROM UNNEST(rate) s) as total_usage from gamelib_rating ")
@@ -123,7 +137,7 @@ def query_popular_game():
     
     return queryset
       
-class GamePopular(viewsets.ModelViewSet) :
+class GamePopular(generics.ListAPIView) :
     serializer_class = GetGameSerializer
     queryset = query_popular_game()    
     

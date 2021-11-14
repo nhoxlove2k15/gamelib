@@ -13,6 +13,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'user_name', 'full_name')
 
+class UserLoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id' , 'user_name' , 'pass_word')
+class UserRegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('__all__')
 
 class GameSearializer(serializers.ModelSerializer):
     class Meta:

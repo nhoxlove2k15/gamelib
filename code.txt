@@ -28,7 +28,13 @@ get detail game with comment , rate
 
 # ==================== saved ===================
 saved 
-swagger
+# ==================== swagger =========================
+game/filter -> done
+game/detail -> done
+post /users/comment/{userid}
+post /users/like/{user_id}
+delete /users/like/{user_id}
+        /users
 container
 recommand
 
