@@ -139,5 +139,6 @@ def query_popular_game():
       
 class GamePopular(generics.ListAPIView) :
     serializer_class = GetGameSerializer
-    queryset = query_popular_game()    
+    queryset = query_popular_game()   
+    #query = query_popular_game()
     

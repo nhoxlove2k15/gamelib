@@ -19,6 +19,7 @@ class UserLoginEngine(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
+        #serializer = CommentSerializer(data=self.request.data)
         try:
             username = body['user_name']
             password = body['pass_word']
@@ -33,23 +34,27 @@ class UserLoginEngine(generics.GenericAPIView):
                 "status" : "failed", 
             })
         try:
-            user = User.objects.get(user_name = username , pass_word = hashlib.md5(password.encode()).hexdigest() )
+            users = User.objects.filter(user_name = username , pass_word = hashlib.md5(password.encode()).hexdigest() )
         except ObjectDoesNotExist:
-            user = None
-        if user is None : 
+            users = None
+        if users is None : 
             return Response({
                 "message": "login failed",
                 "status" : "failed", 
             })
-        print('user : ' , user.full_name)
+        print('user : ' , users)
     # print('user : ' ,user)
-        refresh = RefreshToken.for_user(user)
+        #refresh = RefreshToken.for_user(user)
         # refresh = RefreshToken()
+        serializer = UserSerializer(users , many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)    
 
-        return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        })
+    # def post(self, request, *args, **kwargs):
+    #     serializer = UserLoginSerializer()
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_200_OK)    
+    #     return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 class UserRegisterEngine(generics.GenericAPIView): 
     serializer_class = UserRegisterSerializer
     def post(self, request, *args, **kwargs):

@@ -25,7 +25,7 @@ class Category(models.Model):
     name = models.CharField(max_length=len_medium)
 class Game(models.Model):
     name = models.CharField(max_length=len_medium)
-    description = models.CharField(max_length=len_max)
+    description = models.TextField()
     producer = models.CharField(max_length=len_medium)
     publisher = models.CharField(max_length=len_medium)
     home_page = models.CharField(max_length=len_medium)
@@ -55,4 +55,3 @@ class Rating(models.Model):
     rate = ArrayField(models.IntegerField())
     class Meta:
         unique_together = [['user_id', 'game_id']]
-   
