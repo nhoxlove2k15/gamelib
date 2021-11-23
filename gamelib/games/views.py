@@ -10,14 +10,12 @@ from django_filters import *
 from rest_framework.response import Response
 from rest_framework.schemas import coreapi, openapi
 from rest_framework_simplejwt.tokens import RefreshToken
-
-
 from gamelib.models import Comment, Game, Like, Rating, Requirement, User
 from rest_framework import generics,filters
-
 import django_filters
+from gamelib.serializers import  GetCommentSerializer, GetGameSerializer, RatingSearializer
 
-from gamelib.serializers import CommentSerializer, GetCommentSerializer, GetGameSerializer, GetLikeSerializer, LikeSerializer, RatingSearializer, UserSerializer
+
 
 
 # search
@@ -100,45 +98,48 @@ class GameLatest(generics.ListAPIView):
     serializer_class = GetGameSerializer
 
 def query_popular_game():
-    popular_games = Rating.objects.raw("SELECT  1 as id , game_id_id , (SELECT SUM(s) FROM UNNEST(rate) s) as total_usage from gamelib_rating ")
-    print("len : " , len(popular_games))
-    print(type(popular_games))
-    games_id = []
-    rates = []
-    games_dict = {}
-    for i in range(len(popular_games)) :
-        games_id.append(popular_games[i].game_id_id) 
-        rates.append(popular_games[i].total_usage/5)
-    print('game : ' , games_id) 
-    print('rate',rates)
-    for i in range(len(games_id)):
-        break_points = 0
-        
-        if i == len(games_id) - 1 or games_id[i] != games_id[i+1]:
-            break_points = i + 1
-            if(len(rates[:break_points]) == 0 ) :
-                games_dict[games_id[i]] = sum(rates[:break_points])/1
-            else :
-                games_dict[games_id[i]] = sum(rates[:break_points])/len(rates[:break_points])
-
-            rates = rates[break_points:]
+    try:
+        print("successfully!")
+        popular_games = Rating.objects.raw("SELECT  1 as id , game_id_id , (SELECT SUM(s) FROM UNNEST(rate) s) as total_usage from gamelib_rating ")
+        print("len : " , len(popular_games))
+        print(type(popular_games))
+        games_id = []
+        rates = []
+        games_dict = {}
+        for i in range(len(popular_games)) :
+            games_id.append(popular_games[i].game_id_id) 
+            rates.append(popular_games[i].total_usage/5)
+        print('game : ' , games_id) 
+        print('rate',rates)
+        for i in range(len(games_id)):
+            break_points = 0
             
-    print(games_dict)
-    data = {}
-    gameess=[]
-    count = 1 
-    for key in games_dict.keys() :
-        if games_dict[key] > 5.0 :
-            gameess.append(key)
-    #queryset 
+            if i == len(games_id) - 1 or games_id[i] != games_id[i+1]:
+                break_points = i + 1
+                if(len(rates[:break_points]) == 0 ) :
+                    games_dict[games_id[i]] = sum(rates[:break_points])/1
+                else :
+                    games_dict[games_id[i]] = sum(rates[:break_points])/len(rates[:break_points])
 
-    
-    queryset = Game.objects.filter(id__in=gameess)
-    
-    return queryset
-      
+                rates = rates[break_points:]
+                
+        print(games_dict)
+        data = {}
+        gameess=[]
+        count = 1 
+        for key in games_dict.keys() :
+            if games_dict[key] > 5.0 :
+                gameess.append(key)
+        #queryset 
+
+        
+        queryset = Game.objects.filter(id__in=gameess)
+        
+        return queryset 
+    except:
+        print("error!") 
 class GamePopular(generics.ListAPIView) :
     serializer_class = GetGameSerializer
     queryset = query_popular_game()   
-    #query = query_popular_game()
+    #query = Game.objects.all()
     

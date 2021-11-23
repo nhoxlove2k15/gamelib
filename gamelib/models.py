@@ -34,7 +34,12 @@ class Game(models.Model):
     images = ArrayField(models.CharField(max_length=len_medium))
     categories = models.ManyToManyField(Category)
     
-
+class Rating(models.Model):
+    user_id = models.ForeignKey(User,on_delete=models.CASCADE)
+    game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
+    rate = ArrayField(models.IntegerField())
+    class Meta:
+        unique_together = [['user_id', 'game_id']]
 
 class Like(models.Model) :
     user_id = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -49,9 +54,3 @@ class Comment(models.Model):
     content = models.CharField(max_length=len_medium)
     created_at = models.DateTimeField(null=True , default=datetime.datetime.now())
 
-class Rating(models.Model):
-    user_id = models.ForeignKey(User,on_delete=models.CASCADE)
-    game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
-    rate = ArrayField(models.IntegerField())
-    class Meta:
-        unique_together = [['user_id', 'game_id']]

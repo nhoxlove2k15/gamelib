@@ -20,3 +20,8 @@ dbup:
 	docker-compose -f docker-compose.yml --env-file ./djangoproject/.env up -d
 dbdown:
 	docker-compose -f docker-compose.yml down --volumes
+dbinit:
+	py manage.py makemigrations
+	py manage.py migrate
+	py manage.py test
+	py manage.py runserver

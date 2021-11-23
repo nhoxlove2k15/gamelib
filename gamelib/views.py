@@ -1,6 +1,8 @@
 from io import StringIO
 from rest_framework.schemas import AutoSchema, coreapi
 
+from gamelib.models import Game, Rating
+
 class CustomSchema(AutoSchema):
     def __init__(self):
         super(CustomSchema, self).__init__()
@@ -11,3 +13,4 @@ class CustomSchema(AutoSchema):
         ]
         manual_fields = super().get_manual_fields(path, method)
         return manual_fields + extra_fields
+
