@@ -53,14 +53,6 @@ class CategorySearializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
-class MentorBookingInforSearializer(serializers.Serializer):
-    total_ongoing = serializers.IntegerField()
-    total_cancel = serializers.IntegerField()
-    total_mentee = serializers.IntegerField()
-
-    class Meta:
-        fields = ['total_ongoing', 'total_cancel', 'total_mentee']
-
 
 class CreateUpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -79,8 +71,14 @@ class GetGameDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Game 
-        fields = '__all__'
+        fields = '__all__'   
+
+class GetGameHomePageSerializer(serializers.ModelSerializer):
     
+    class Meta:
+        model = Game 
+        fields = ['id','name','release_date','images',]
+ 
 
 
 class CreateUpdateRatingSerializer(serializers.ModelSerializer):

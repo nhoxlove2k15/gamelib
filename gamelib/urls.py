@@ -33,6 +33,8 @@ urlpatterns = [
     path('games/filter/',GameFilterByDate.as_view()),
     # details game
     path('games/detail/<int:game_id>' , GameDetailEngine.as_view()),
+    # homepage
+    path('homepage' , GameHomePage.as_view()),
 
     #path('users', user_list),
     

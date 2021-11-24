@@ -13,9 +13,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from gamelib.models import Comment, Game, Like, Rating, Requirement, User
 from rest_framework import generics,filters
 import django_filters
-from gamelib.serializers import  GetCommentSerializer, GetGameSerializer, RatingSearializer
+from gamelib.serializers import  GetCommentSerializer, GetGameDetailSerializer, GetGameHomePageSerializer,GetGameDetailSerializer ,GetGameHomePageSerializer, GetGameSerializer, RatingSearializer
 
-
+limit = 5 
 
 
 # search
@@ -56,6 +56,91 @@ class GameSearchByName(generics.ListAPIView):
     filter_backends = (filters.SearchFilter,)
     queryset = Game.objects.all()
     serializer_class = GetGameSerializer
+class GameHomePage(generics.GenericAPIView):
+    serializers = GetGameHomePageSerializer
+    def get(self, request, *args,**kwargs):
+        game_hanh_dong = Game.objects.filter(categories__id = 1 )
+        serializer_game_hanh_dong = GetGameHomePageSerializer(game_hanh_dong , many=True)
+        # "hành động", #1
+        # "bắn súng", #2
+        # "phiêu lưu", #3
+        # "sinh tồn",#4
+        # "thể thao",#5
+        # "đối kháng",#6
+        # "chiến thuật",#7
+        # "kinh dị",#8
+        # "nhập vai",#9
+        # "offline", #10
+        # "online",#11
+        # "mô phỏng"#12
+        game_ban_sung = Game.objects.filter(categories__id = 2 )
+        serializer_game_ban_sung= GetGameHomePageSerializer(game_ban_sung , many=True)
+
+        game_phieu_luu = Game.objects.filter(categories__id = 3 )
+        serializer_game_phieu_luu= GetGameHomePageSerializer(game_phieu_luu , many=True)
+
+        game_sinh_ton = Game.objects.filter(categories__id = 4 )
+        serializer_game_sinh_ton= GetGameHomePageSerializer(game_sinh_ton , many=True)
+
+        game_the_thao = Game.objects.filter(categories__id = 5 )
+        serializer_game_the_thao = GetGameHomePageSerializer(game_the_thao , many=True)
+
+        game_doi_khang = Game.objects.filter(categories__id = 6 )
+        serializer_game_doi_khang = GetGameHomePageSerializer(game_doi_khang , many=True)
+
+        game_chien_thuat = Game.objects.filter(categories__id = 7 )
+        serializer_game_chien_thuat = GetGameHomePageSerializer(game_chien_thuat , many=True)
+
+        game_kinh_di = Game.objects.filter(categories__id = 8 )
+        serializer_game_kinh_di = GetGameHomePageSerializer(game_kinh_di , many=True)
+
+        game_nhap_vai = Game.objects.filter(categories__id = 9 )
+        serializer_game_nhap_vai = GetGameHomePageSerializer(game_nhap_vai , many=True)
+
+        game_offline = Game.objects.filter(categories__id = 10 )
+        serializer_game_offline = GetGameHomePageSerializer(game_offline , many=True)
+        game_online = Game.objects.filter(categories__id = 11 )
+        serializer_game_online = GetGameHomePageSerializer(game_online , many=True)
+
+        game_mo_phong = Game.objects.filter(categories__id = 12 )
+        serializer_game_mo_phong = GetGameHomePageSerializer(game_mo_phong , many=True)
+
+        game_latest = Game.objects.all().order_by('-release_date')[:limit]
+        serializer_game_latest = GetGameHomePageSerializer(game_latest, many=True)
+
+        game_popular = query_popular_game()
+        serializer_game_popular = GetGameHomePageSerializer(game_popular, many=True)
+
+        
+
+        return JsonResponse({
+            'game_latest': serializer_game_latest.data ,
+            'game_popular':serializer_game_popular.data,
+
+            'game_hanh_dong' : serializer_game_hanh_dong.data,
+            'game_ban_sung' : serializer_game_ban_sung.data,
+            'game_phieu_luu' : serializer_game_phieu_luu.data,
+            'game_sinh_ton' : serializer_game_sinh_ton.data,
+            'game_the_thao' : serializer_game_the_thao.data,
+            'game_doi_khang' : serializer_game_doi_khang.data,
+            'game_chien_thuat' : serializer_game_chien_thuat.data,
+            'game_kinh_di' : serializer_game_kinh_di.data,
+            'game_nhap_vai' : serializer_game_nhap_vai.data,
+            'game_offline' : serializer_game_offline.data,
+            'game_online' : serializer_game_online.data,
+            'game_mo_phong' : serializer_game_mo_phong.data,
+            
+
+
+
+
+        })
+
+# game = Game.objects.get(pk=1)
+# categories = game.categories.all()
+# print(game.name + "" )
+# for i in range(len(categories)):
+#     print(categories[i].name)
 
 class GameDetailEngine(generics.GenericAPIView):
     serializer_class = GetGameSerializer
@@ -128,7 +213,7 @@ def query_popular_game():
         gameess=[]
         count = 1 
         for key in games_dict.keys() :
-            if games_dict[key] > 5.0 :
+            if games_dict[key] > 3.0 :
                 gameess.append(key)
         #queryset 
 
